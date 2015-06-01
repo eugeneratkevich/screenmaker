@@ -15,16 +15,18 @@ class MainFrame(wx.Frame):
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
-        wx.Frame.__init__(self, None, title="create screenshot", size=(400, 330))
+        wx.Frame.__init__(self, None, title="create screenshot", size=(400, 330),  style = wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CLIP_CHILDREN)
         self.imagescreenpath = ''
         self.imagescreenXs = 0
         self.imagescreenYs = 0
         self.imagescreenXf = 0
         self.imagescreenYf = 0
         self.PhotoMaxSize = 340
+	self.lastMousePos = wx.Point(0, 0)
 
         # panel = wx.Panel(self)
-        panel = wx.Panel(self, -1, (20, 20), (self.PhotoMaxSize, 200),  style = wx.TAB_TRAVERSAL)
+        panel = wx.Panel(self, -1, (20, 20), (self.PhotoMaxSize, 200))
+	
 
         self.panel = panel
 
@@ -74,8 +76,9 @@ class MainFrame(wx.Frame):
 
     def OnLeftDownTestWin(self, event):
         self.imagescreenXs, self.imagescreenYs = wx.GetMousePosition()
+	self.panel.SetPosition(wx.Point(self.imagescreenXs, self.imagescreenYs))
         
-
+	self.Bind(wx.EVT_MOTION, self.OnFrame1Motion)
         self.Bind(wx.EVT_LEFT_UP, self.OnLeftUpTestWin)
 
         # print 'start'
@@ -84,12 +87,29 @@ class MainFrame(wx.Frame):
 
     def OnLeftUpTestWin(self, event):
         self.imagescreenXf, self.imagescreenYf = wx.GetMousePosition()
+	
         self.OnScreen(event)
         # print 'end'
         # print x
         # print y
 
+    def OnFrame1Motion(self, event):
+        if event.LeftIsDown():
+            x, y = event.GetPosition()
 
+            self.panel.SetPosition(wx.Point(self.imagescreenXs, self.imagescreenYs))
+            self.panel.SetSize(wx.Size(x-self.imagescreenXs, y-self.imagescreenYs))
+            print 'move'
+            print self.imagescreenXs
+            print self.imagescreenXs - x
+            print x
+
+            deltaX = x - self.lastMousePos[0]
+            deltaY = y - self.lastMousePos[1]
+            self.lastMousePos = wx.Point(x, y)
+            x, y = self.GetPosition()
+            # self.Move(wx.Point(x + deltaX, y + deltaY))
+        event.Skip()
 
 
     def regHotKey(self):
@@ -141,8 +161,8 @@ class MainFrame(wx.Frame):
         self.SetBackgroundColour('#4f5049')
 
 
-        self.panel.SetPosition(wx.Point(self.imagescreenXs, self.imagescreenYs))
-        self.panel.SetSize(wx.Size(self.imagescreenXf - self.imagescreenXs, self.imagescreenYf - self.imagescreenYs))
+        #self.panel.SetPosition(wx.Point(self.imagescreenXs, self.imagescreenYs))
+        #self.panel.SetSize(wx.Size(self.imagescreenXf - self.imagescreenXs, self.imagescreenYf - self.imagescreenYs))
 
 
         im=ImageGrab.grab(bbox=(
@@ -200,6 +220,7 @@ def main():
     """"""
     app = wx.App(False)
     frame = MainFrame()
+    # frame.ShowFullScreen(True,wxFULLSCREEN_ALL)
     app.MainLoop()
  
 if __name__ == "__main__":
