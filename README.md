@@ -1,2 +1,4 @@
 # screenmaker
 screenmaker
+
+wxpython
