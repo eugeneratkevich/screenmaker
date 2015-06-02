@@ -39,13 +39,12 @@ class MainFrame(wx.Frame):
 
         # panel.CaptureMouse()
 
-        myCursor= wx.StockCursor(wx.CURSOR_CROSS)
-        self.SetCursor(myCursor)
+        # myCursor= wx.StockCursor(wx.CURSOR_CROSS)
+        # self.SetCursor(myCursor)
 
         self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDownTestWin)
 
 
-        
 
         wx.Button(self, 1, 'create screenshot', (140, 240), (120, 28))
         self.Bind(wx.EVT_BUTTON, self.OnScreen, id=1)
@@ -65,7 +64,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MOTION, self.OnFrame1Motion)
         self.Bind(wx.EVT_LEFT_UP, self.OnLeftUpTestWin)
 
-        # print 'start'
+        print 'start'
         # print x
         # print y
 
@@ -83,7 +82,7 @@ class MainFrame(wx.Frame):
 
             self.panel.SetPosition(wx.Point(self.imagescreenXs, self.imagescreenYs))
             self.panel.SetSize(wx.Size(x-self.imagescreenXs, y-self.imagescreenYs))
-            print 'move'
+            print 'move main'
             print self.imagescreenXs
             print self.imagescreenXs - x
             print x
@@ -112,13 +111,13 @@ class MainFrame(wx.Frame):
     def handleHotKey(self, event):
         self.child = ScreenFrame(self)
         self.child.Show()
-        self.OnScreen(event)
+        # self.OnScreen(event)
         """
         Prints a simple message when a hotkey event is received.
         """
         # x, y = wx.GetMousePosition()
         # print x
-        print "do hot key actions"
+        print "do hot key main actions"
 
 
 
@@ -239,28 +238,22 @@ class ScreenFrame(wx.Frame):
         self.lastMousePos = wx.Point(0, 0)
         self.parent = parent
 
+        self.ToggleWindowStyle(wx.STAY_ON_TOP)
+
         # panel = wx.Panel(self)
         self.panel = wx.Panel(self, -1, (20, 20), (self.PhotoMaxSize, 200))
-    
-
-        # self.panel = panel
-
         self.SetTransparent(200)
         self.Maximize(True)
-        self.tbIcon = custTray.CustomTaskBarIcon(self)
- 
-        self.Bind(wx.EVT_ICONIZE, self.onMinimize)
-        self.Bind(wx.EVT_CLOSE, self.onClose)
- 
+        # self.tbIcon = custTray.CustomTaskBarIcon(self)
         self.imageCtrl = wx.StaticBitmap(self.panel)
-        # panel.SetBackgroundColour(wx.WHITE)
+        self.panel.SetBackgroundColour(wx.WHITE)
 
         # panel.CaptureMouse()
 
         myCursor= wx.StockCursor(wx.CURSOR_CROSS)
         self.SetCursor(myCursor)
 
-        self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDownTestWin)
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDownScreenWin)
 
         # self.Bind(wx.EVT_LEFT_UP, self.OnLeftUpTestWin)
 
@@ -271,50 +264,50 @@ class ScreenFrame(wx.Frame):
 
         
 
-        wx.Button(self, 1, 'create screenshot', (140, 240), (120, 28))
+        # wx.Button(self, 1, 'create screenshot', (140, 240), (120, 28))
         # wx.Button(self, 2, 'Close', (260, 240))
 
-        self.Bind(wx.EVT_BUTTON, self.OnScreen, id=1)
+        # self.Bind(wx.EVT_BUTTON, self.OnScreen, id=1)
         # self.Bind(wx.EVT_BUTTON, self.OnClose, id=2)
 
         self.Centre()
         self.Show()
-
-        
-
+        self.parent.Hide()
 
 
-        self.regHotKey()
-        self.Bind(wx.EVT_HOTKEY, self.handleHotKey, id=self.hotKeyId)
+        # self.regHotKey()
+        # self.Bind(wx.EVT_HOTKEY, self.handleHotKey, id=self.hotKeyId)
 
 
 
-    def OnLeftDownTestWin(self, event):
+    def OnLeftDownScreenWin(self, event):
+        print 'OnLeftDownScreenWin'
+
         self.imagescreenXs, self.imagescreenYs = wx.GetMousePosition()
         self.panel.SetPosition(wx.Point(self.imagescreenXs, self.imagescreenYs))
         
-        self.Bind(wx.EVT_MOTION, self.OnFrame1Motion)
-        self.Bind(wx.EVT_LEFT_UP, self.OnLeftUpTestWin)
+        self.Bind(wx.EVT_MOTION, self.OnScreenCursorMotion)
+        self.Bind(wx.EVT_LEFT_UP, self.OnLeftUpScreenWin)
 
-        # print 'start'
-        # print x
-        # print y
+        print 'start'
+        print x
+        print y
 
-    def OnLeftUpTestWin(self, event):
+    def OnLeftUpScreenWin(self, event):
         self.imagescreenXf, self.imagescreenYf = wx.GetMousePosition()
     
         self.OnScreen(event)
-        # print 'end'
-        # print x
-        # print y
+        print 'end'
+        print x
+        print y
 
-    def OnFrame1Motion(self, event):
+    def OnScreenCursorMotion(self, event):
         if event.LeftIsDown():
             x, y = event.GetPosition()
 
             self.panel.SetPosition(wx.Point(self.imagescreenXs, self.imagescreenYs))
             self.panel.SetSize(wx.Size(x-self.imagescreenXs, y-self.imagescreenYs))
-            print 'move'
+            print 'move screen'
             print self.imagescreenXs
             print self.imagescreenXs - x
             print x
@@ -327,27 +320,27 @@ class ScreenFrame(wx.Frame):
         event.Skip()
 
 
-    def regHotKey(self):
-        """
-        This function registers the hotkey Alt+C with id=101
-        """
-        self.hotKeyId = 101
-        self.RegisterHotKey(
-            self.hotKeyId, #a unique ID for this hotkey
-            win32con.MOD_ALT, #the modifier key
-            # win32con.MOD_CONTROL, #the modifier key
-            ord('C'),
-            # win32con.VK_F1,
-            ) #the key to watch for
+    # def regHotKey(self):
+    #     """
+    #     This function registers the hotkey Alt+C with id=101
+    #     """
+    #     self.hotKeyId = 101
+    #     self.RegisterHotKey(
+    #         self.hotKeyId, #a unique ID for this hotkey
+    #         win32con.MOD_ALT, #the modifier key
+    #         # win32con.MOD_CONTROL, #the modifier key
+    #         ord('C'),
+    #         # win32con.VK_F1,
+    #         ) #the key to watch for
 
-    def handleHotKey(self, event):
-        self.OnScreen(event)
-        """
-        Prints a simple message when a hotkey event is received.
-        """
-        # x, y = wx.GetMousePosition()
-        # print x
-        print "do hot key actions"
+    # def handleHotKey(self, event):
+    #     self.OnScreen(event)
+    #     """
+    #     Prints a simple message when a hotkey event is received.
+    #     """
+    #     # x, y = wx.GetMousePosition()
+    #     # print x
+    #     print "do hot key actions"
 
 
 
@@ -423,12 +416,7 @@ class ScreenFrame(wx.Frame):
         self.tbIcon.Destroy()
         self.Destroy()
  
-    #----------------------------------------------------------------------
-    def onMinimize(self, event):
-        """
-        When minimizing, hide the frame so it "minimizes to tray"
-        """
-        self.Hide()
+
 
 
 #----------------------------------------------------------------------
